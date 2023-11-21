@@ -65,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeAutoConfiguration = {WebSecurityConfig.class})
 class VisitRestControllerTest {
 
-    private static final long ID = 1L;
+    private static final Long ID = 1L;
 
     @MockBean
     private VisitService visitService;
@@ -92,7 +92,7 @@ class VisitRestControllerTest {
     @ParameterizedTest
     @MethodSource("visitResponseDataProvider")
     @WithMockUser
-    void getVisit_CorrectData_Returned(long id, long vetId, long petId, long treatmentRoomId,
+    void getVisit_CorrectData_Returned(Long id, Long vetId, Long petId, Long treatmentRoomId,
                                        OffsetDateTime startDateTime, Duration duration,
                                        BigDecimal price, VisitType visitType, OperationType operationType,
                                        VisitStatus visitStatus) throws Exception {
@@ -111,7 +111,7 @@ class VisitRestControllerTest {
 
         Visit visit = new Visit();
 
-        when(visitService.getVisitById(any(User.class), anyLong())).thenReturn(visit);
+        when(visitService.getVisitById(any(User.class), anyLong())).thenReturn(visitResponse);
         when(visitMapper.map(any(Visit.class))).thenReturn(visitResponse);
 
         var resultActions = mockMvc.perform(get("/api/visits/{id}", id)
@@ -126,7 +126,7 @@ class VisitRestControllerTest {
     @ParameterizedTest
     @MethodSource("visitResponseDataProvider")
     @WithMockUser
-    void createVisit_CreateData_Created(long id, long vetId, long petId, long treatmentRoomId,
+    void createVisit_CreateData_Created(Long id, Long vetId, Long petId, long treatmentRoomId,
                                         OffsetDateTime startDateTime, Duration duration,
                                         BigDecimal price, VisitType visitType, OperationType operationType,
                                         VisitStatus visitStatus) throws Exception {
@@ -155,7 +155,7 @@ class VisitRestControllerTest {
 
         var visit = new Visit();
 
-        when(visitService.createVisit(any(User.class), any(VisitRequestDto.class))).thenReturn(visit);
+        when(visitService.createVisit(any(User.class), any(VisitRequestDto.class))).thenReturn(visitResponse);
         when(visitMapper.map(any(Visit.class))).thenReturn(visitResponse);
 
         var resultActions = mockMvc.perform(post("/api/visits")
@@ -172,7 +172,7 @@ class VisitRestControllerTest {
     @ParameterizedTest
     @MethodSource("visitResponseDataProvider")
     @WithMockUser
-    void getAllVisits_VisitsExist_Returned(long id, long vetId, long petId, long treatmentRoomId,
+    void getAllVisits_VisitsExist_Returned(Long id, Long vetId, Long petId, Long treatmentRoomId,
                                            OffsetDateTime startDateTime, Duration duration,
                                            BigDecimal price, VisitType visitType, OperationType operationType,
                                            VisitStatus visitStatus) throws Exception {
@@ -215,9 +215,9 @@ class VisitRestControllerTest {
 
         var visitResponse = VisitResponseDto.builder()
                 .id(ID)
-                .vetId(1)
-                .petId(1)
-                .treatmentRoomId(1)
+                .vetId(1L)
+                .petId(1L)
+                .treatmentRoomId(1L)
                 .startDateTime(OffsetDateTime.of(LocalDateTime.of(2020, 11, 3, 5, 30), ZoneOffset.UTC))
                 .duration(Duration.ofMinutes(30))
                 .price(BigDecimal.valueOf(100))
@@ -226,7 +226,7 @@ class VisitRestControllerTest {
                 .visitStatus(VisitStatus.SCHEDULED)
                 .build();
 
-        when(visitService.finalizeVisit(any(VisitEditDto.class))).thenReturn(visit);
+        when(visitService.finalizeVisit(any(VisitEditDto.class))).thenReturn(visitResponse);
         when(visitMapper.map(any(Visit.class))).thenReturn(visitResponse);
 
         var resultActions = mockMvc.perform(patch("/api/visits")
@@ -237,7 +237,6 @@ class VisitRestControllerTest {
         verifyJson(resultActions, visitResponse);
 
         verify(visitService).finalizeVisit(eq(visitEditDto));
-        verify(visitMapper).map(eq(visit));
     }
 
     @Test

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.gr.veterinaryapp.exception.IncorrectDataException;
 import pl.gr.veterinaryapp.exception.ResourceNotFoundException;
+import pl.gr.veterinaryapp.mapper.PetMapper;
 import pl.gr.veterinaryapp.model.dto.PetRequestDto;
+import pl.gr.veterinaryapp.model.dto.PetResponseDto;
 import pl.gr.veterinaryapp.model.entity.Animal;
 import pl.gr.veterinaryapp.model.entity.Client;
 import pl.gr.veterinaryapp.model.entity.Pet;
@@ -26,17 +28,18 @@ public class PetServiceImpl implements PetService {
     private final PetRepository petRepository;
     private final ClientRepository clientRepository;
     private final AnimalRepository animalRepository;
+    private final PetMapper petMapper;
 
     @Override
-    public List<Pet> getAllPets(User user) {
-        return petRepository.findAll()
-                .stream()
+    public List<PetResponseDto> getAllPets(User user) {
+        return petRepository.findAll().stream()
                 .filter(pet -> isUserAuthorized(user, pet.getClient()))
+                .map(petMapper::map)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Pet getPetById(User user, long id) {
+    public PetResponseDto getPetById(User user, Long id) {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
 
@@ -44,12 +47,12 @@ public class PetServiceImpl implements PetService {
             throw new ResourceNotFoundException("Wrong id.");
         }
 
-        return pet;
+        return petMapper.map(pet);
     }
 
     @Transactional
     @Override
-    public Pet createPet(User user, PetRequestDto petRequestDto) {
+    public PetResponseDto createPet(User user, PetRequestDto petRequestDto) {
         if (petRequestDto.getName() == null) {
             throw new IncorrectDataException("Name cannot be null.");
         }
@@ -73,12 +76,13 @@ public class PetServiceImpl implements PetService {
         newPet.setAnimal(animal);
         newPet.setClient(client);
 
-        return petRepository.save(newPet);
+        petRepository.save(newPet);
+        return petMapper.map(newPet);
     }
 
     @Transactional
     @Override
-    public void deletePet(long id) {
+    public void deletePet(Long id) {
         Pet result = petRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         petRepository.delete(result);

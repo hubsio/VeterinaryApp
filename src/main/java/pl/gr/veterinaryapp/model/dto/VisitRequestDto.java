@@ -17,21 +17,11 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class VisitRequestDto {
-
-    private long vetId;
-    private long petId;
+    private Long vetId;
+    private Long petId;
     private OffsetDateTime startDateTime;
     private Duration duration;
     private BigDecimal price;
     private VisitType visitType;
     private OperationType operationType;
-
-    public static class VisitRequestDtoBuilder {
-
-        private long vetId = 1;
-        private long petId = 1;
-        private OffsetDateTime startDateTime = OffsetDateTime.MIN;
-        private Duration duration = Duration.ZERO;
-        private BigDecimal price = BigDecimal.ZERO;
-    }
 }

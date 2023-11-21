@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AnimalServiceTest {
 
-    private static final long ANIMAL_ID = 1L;
+    private static final Long ANIMAL_ID = 1L;
     @Mock
     private AnimalRepository animalRepository;
     @Mock
@@ -43,15 +43,14 @@ class AnimalServiceTest {
         Animal animal = new Animal();
 
         when(animalRepository.findById(anyLong())).thenReturn(Optional.of(animal));
-
+        var dto = mapper.mapToDto(animal);
         var result = animalService.getAnimalById(ANIMAL_ID);
 
         assertThat(result)
                 .isNotNull()
-                .isEqualTo(animal);
+                .isEqualTo(dto);
 
         verify(animalRepository).findById(eq(ANIMAL_ID));
-        verifyNoInteractions(mapper);
     }
 
     @Test
@@ -76,8 +75,6 @@ class AnimalServiceTest {
         animal.setSpecies("test");
 
         when(animalRepository.findBySpecies(anyString())).thenReturn(Optional.empty());
-        when(mapper.map(any(AnimalRequestDto.class))).thenReturn(animal);
-        when(animalRepository.save(any(Animal.class))).thenReturn(animal);
 
         var result = animalService.createAnimal(animalDTO);
 

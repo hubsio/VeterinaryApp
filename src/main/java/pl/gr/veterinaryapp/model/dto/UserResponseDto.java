@@ -3,10 +3,8 @@ package pl.gr.veterinaryapp.model.dto;
 import lombok.Data;
 
 @Data
-public class ClientResponseDto {
-
+public class UserResponseDto {
     private Long id;
-    private String name;
-    private String surname;
     private String username;
+    private Long role;
 }

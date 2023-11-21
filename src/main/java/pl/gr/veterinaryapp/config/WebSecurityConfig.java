@@ -25,9 +25,7 @@ import pl.gr.veterinaryapp.security.encoder.BCryptPepperPasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean

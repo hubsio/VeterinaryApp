@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class VetServiceTest {
 
-    private static final long VET_ID = 1L;
+    private static final Long VET_ID = 1L;
     @Mock
     private VetRepository vetRepository;
     @Mock

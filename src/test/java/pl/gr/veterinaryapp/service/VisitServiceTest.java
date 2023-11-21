@@ -63,9 +63,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class VisitServiceTest {
 
-    private static final long VISIT_ID = 1L;
-    private static final long PET_ID = 1L;
-    private static final long VET_ID = 1L;
+    private static final Long VISIT_ID = 1L;
+    private static final Long PET_ID = 1L;
+    private static final Long VET_ID = 1L;
     private static final String VISIT_DESCRIPTION = "description";
     private static final User USER = new User("name", "passwd", Collections.emptySet());
 
@@ -200,9 +200,9 @@ class VisitServiceTest {
         assertThat(result)
                 .isNotNull()
                 .matches(visit -> Objects.equals(visit.getId(), VISIT_ID))
-                .matches(visit -> Objects.equals(visit.getPet(), pet))
-                .matches(visit -> Objects.equals(visit.getVet(), vet))
-                .matches(visit -> Objects.equals(visit.getTreatmentRoom(), treatmentRoom))
+                .matches(visit -> Objects.equals(visit.getPetId(), pet))
+                .matches(visit -> Objects.equals(visit.getVetId(), vet))
+                .matches(visit -> Objects.equals(visit.getTreatmentRoomId(), treatmentRoom))
                 .matches(visit -> Objects.equals(visit.getStartDateTime(), startDateTime))
                 .matches(visit -> Objects.equals(visit.getDuration(), duration))
                 .matches(visit -> Objects.equals(visit.getPrice(), request.getPrice()))

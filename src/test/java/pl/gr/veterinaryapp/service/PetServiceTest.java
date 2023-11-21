@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PetServiceTest {
 
-    private static final long PET_ID = 1L;
+    private static final Long PET_ID = 1L;
     private static final String PET_NAME = "Puszek";
     private static final long ANIMAL_ID = 1L;
     private static final long CLIENT_ID = 1L;
@@ -147,8 +147,8 @@ class PetServiceTest {
         assertThat(result)
                 .isNotNull()
                 .matches(pet -> Objects.equals(pet.getId(), PET_ID))
-                .matches(pet -> Objects.equals(pet.getAnimal(), animal))
-                .matches(pet -> Objects.equals(pet.getClient(), client))
+                .matches(pet -> Objects.equals(pet.getAnimalId(), animal))
+                .matches(pet -> Objects.equals(pet.getAnimalId(), client))
                 .matches(pet -> Objects.equals(pet.getBirthDate(), birthDate));
 
         verify(clientRepository).findById(eq(CLIENT_ID));

@@ -7,11 +7,13 @@ import pl.gr.veterinaryapp.exception.IncorrectDataException;
 import pl.gr.veterinaryapp.exception.ResourceNotFoundException;
 import pl.gr.veterinaryapp.mapper.AnimalMapper;
 import pl.gr.veterinaryapp.model.dto.AnimalRequestDto;
+import pl.gr.veterinaryapp.model.dto.AnimalResponseDto;
 import pl.gr.veterinaryapp.model.entity.Animal;
 import pl.gr.veterinaryapp.repository.AnimalRepository;
 import pl.gr.veterinaryapp.service.AnimalService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -21,32 +23,37 @@ public class AnimalServiceImpl implements AnimalService {
     private final AnimalMapper mapper;
 
     @Override
-    public Animal getAnimalById(long id) {
-        return animalRepository.findById(id)
+    public AnimalResponseDto getAnimalById(Long id) {
+        Animal animal = animalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
+        return mapper.mapToDto(animal);
     }
 
     @Transactional
     @Override
-    public Animal createAnimal(AnimalRequestDto animalRequestDto) {
+    public AnimalResponseDto createAnimal(AnimalRequestDto animalRequestDto) {
         var animal = animalRepository.findBySpecies(animalRequestDto.getSpecies());
         if (animal.isPresent()) {
             throw new IncorrectDataException("Species exists.");
         }
 
-        return animalRepository.save(mapper.map(animalRequestDto));
+        var createdAnimal = animalRepository.save(mapper.map(animalRequestDto));
+        return mapper.mapToDto(createdAnimal);
     }
 
     @Transactional
     @Override
-    public void deleteAnimal(long id) {
+    public void deleteAnimal(Long id) {
         Animal animal = animalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         animalRepository.delete(animal);
     }
 
     @Override
-    public List<Animal> getAllAnimals() {
-        return animalRepository.findAll();
+    public List<AnimalResponseDto> getAllAnimals() {
+        List<Animal> animals = animalRepository.findAll();
+        return animals.stream()
+                .map(mapper::mapToDto)
+                .collect(Collectors.toList());
     }
 }
