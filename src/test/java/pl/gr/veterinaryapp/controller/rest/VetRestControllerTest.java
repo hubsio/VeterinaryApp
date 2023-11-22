@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeAutoConfiguration = {WebSecurityConfig.class})
 class VetRestControllerTest {
 
-    private static final long ID = 1L;
+    private static final Long ID = 1L;
     private static final String VET_NAME = "Kazimierz";
     private static final String VET_SURNAME = "Wieloglowy";
     private static final String IMAGE_URL = "url.jpg";
@@ -59,15 +59,14 @@ class VetRestControllerTest {
     void addVet_CorrectData_Created() throws Exception {
         OffsetTime workStartTime = OffsetTime.of(LocalTime.MIN, ZoneOffset.MIN);
         OffsetTime workEndTime = OffsetTime.of(LocalTime.MAX, ZoneOffset.MAX);
-        var vetRequest = prepareVetRequest(VET_NAME, VET_SURNAME, IMAGE_URL, workStartTime, workEndTime);
-
+        var vetRequestDto = prepareVetRequest(VET_NAME, VET_SURNAME, IMAGE_URL, workStartTime, workEndTime);
         var vet = prepareVet(VET_NAME, VET_SURNAME, IMAGE_URL, workStartTime, workEndTime);
 
-        when(vetService.createVet(any(VetRequestDto.class))).thenReturn(vet);
+        when(vetService.createVet(any(VetRequestDto.class))).thenReturn(vetResponseDto);
 
         mockMvc.perform(post("/api/vets")
                 .with(csrf())
-                .content(objectMapper.writeValueAsString(vetRequest))
+                .content(objectMapper.writeValueAsString(vetRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(VET_NAME))
@@ -75,7 +74,7 @@ class VetRestControllerTest {
                 .andExpect(jsonPath("$.workEndTime").value(workEndTime.toString()))
                 .andExpect(jsonPath("$.photoUrl").value(IMAGE_URL));
 
-        verify(vetService).createVet(vetRequest);
+        verify(vetService).createVet(vetRequestDto);
     }
 
     @Test

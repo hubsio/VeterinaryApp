@@ -54,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         excludeAutoConfiguration = {WebSecurityConfig.class})
 class PetRestControllerTest {
 
-    private static final long ID = 1L;
+    private static final Long ID = 1L;
     private static final String PET_NAME = "Puszek";
 
     @MockBean
@@ -82,8 +82,7 @@ class PetRestControllerTest {
 
         var petResponse = preparePetResponse(pet);
 
-        when(petService.createPet(any(User.class), any(PetRequestDto.class))).thenReturn(pet);
-        when(petMapper.map(any(Pet.class))).thenReturn(petResponse);
+        when(petService.createPet(any(User.class), any(PetRequestDto.class))).thenReturn(petResponse);
 
         var result = mockMvc.perform(post("/api/pets")
                 .with(csrf())
@@ -92,7 +91,6 @@ class PetRestControllerTest {
 
         verifyJson(result, petResponse);
 
-        verify(petMapper).map(eq(pet));
         verify(petService).createPet(any(User.class), eq(petRequest));
     }
 
@@ -108,15 +106,13 @@ class PetRestControllerTest {
 
         var petResponse = preparePetResponse(pet);
 
-        when(petService.getPetById(any(User.class), anyLong())).thenReturn(pet);
-        when(petMapper.map(any(Pet.class))).thenReturn(petResponse);
+        when(petService.getPetById(any(User.class), anyLong())).thenReturn(petResponse);
 
         var result = mockMvc.perform(get("/api/pets/{id}", ID)
                 .contentType(MediaType.APPLICATION_JSON));
 
         verifyJson(result, petResponse);
 
-        verify(petMapper).map(eq(pet));
         verify(petService).getPetById(any(User.class), eq(ID));
     }
 
@@ -151,7 +147,7 @@ class PetRestControllerTest {
         }
 
         when(petMapper.mapAsList(anyList())).thenReturn(petResponses);
-        when(petService.getAllPets(any(User.class))).thenReturn(pets);
+        when(petService.getAllPets(any(User.class))).thenReturn(petResponses);
 
         var result = mockMvc.perform(get("/api/pets", ID)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -162,7 +158,6 @@ class PetRestControllerTest {
         }
 
         verify(petService).getAllPets(any(User.class));
-        verify(petMapper).mapAsList(eq(pets));
     }
 
     private void verifyJson(ResultActions result, PetResponseDto petResponse) throws Exception {

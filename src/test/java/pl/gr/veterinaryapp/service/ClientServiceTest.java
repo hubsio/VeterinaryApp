@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
 
-    private static final long CLIENT_ID = 1L;
+    private static final Long CLIENT_ID = 1L;
     private static final String CLIENT_NAME = "Konrad";
     private static final String CLIENT_SURNAME = "Gabrukiewicz";
     @Mock
@@ -77,9 +77,11 @@ class ClientServiceTest {
         ClientRequestDto clientDTO = new ClientRequestDto();
         clientDTO.setName(CLIENT_NAME);
         clientDTO.setSurname(CLIENT_SURNAME);
+
         Client client = new Client();
         client.setName(CLIENT_NAME);
         client.setSurname(CLIENT_SURNAME);
+        client.setId(1L);
 
         when(mapper.map(any(ClientRequestDto.class))).thenReturn(client);
         when(clientRepository.save(any(Client.class))).thenReturn(client);

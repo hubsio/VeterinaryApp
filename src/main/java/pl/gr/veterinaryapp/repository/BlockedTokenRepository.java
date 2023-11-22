@@ -9,6 +9,5 @@ import java.util.Optional;
 public interface BlockedTokenRepository extends JpaRepository<BlockedToken, Long> {
 
     Optional<BlockedToken> findByAuthToken(String authToken);
-
     void deleteAllByExpirationTimeBefore(OffsetDateTime now);
 }
