@@ -1,6 +1,7 @@
 package pl.gr.veterinaryapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PetServiceImpl implements PetService {
 
     private final PetRepository petRepository;
@@ -40,6 +42,7 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public PetResponseDto getPetById(User user, Long id) {
+        log.info("Getting pet with id: {}", id);
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
 
@@ -53,6 +56,7 @@ public class PetServiceImpl implements PetService {
     @Transactional
     @Override
     public PetResponseDto createPet(User user, PetRequestDto petRequestDto) {
+        log.info("Creating new pet: {}", petRequestDto.toString());
         if (petRequestDto.getName() == null) {
             throw new IncorrectDataException("Name cannot be null.");
         }
@@ -75,6 +79,7 @@ public class PetServiceImpl implements PetService {
         newPet.setBirthDate(petRequestDto.getBirthDate());
         newPet.setAnimal(animal);
         newPet.setClient(client);
+        log.info("New pet created: {} , client: {}", animal.toString(), client.toString());
 
         petRepository.save(newPet);
         return petMapper.map(newPet);
@@ -83,12 +88,14 @@ public class PetServiceImpl implements PetService {
     @Transactional
     @Override
     public void deletePet(Long id) {
+        log.info("Deleting pet with id: {}", id);
         Pet result = petRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         petRepository.delete(result);
     }
 
     private boolean isUserAuthorized(User user, Client client) {
+        log.info("Checking authorization for user: {}", user.getUsername());
         boolean isClient = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)

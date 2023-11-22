@@ -1,6 +1,7 @@
 package pl.gr.veterinaryapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto getUser(Long id) {
+        log.info("Retrieving user by ID: {}", id);
         VetAppUser user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         return mapper.mapToDto(user);
@@ -43,6 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponseDto createUser(UserDto user) {
+        log.info("Creating new user with username: {}", user.getUsername());
         userRepository.findByUsername(user.getUsername())
                 .ifPresent(u -> {
                     throw new IncorrectDataException("Username exists.");
@@ -58,6 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
+        log.info("Deleting user by ID: {}", id);
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("Wrong id."));
         userRepository.delete(user);

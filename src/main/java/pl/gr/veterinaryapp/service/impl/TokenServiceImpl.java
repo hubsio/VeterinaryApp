@@ -1,6 +1,7 @@
 package pl.gr.veterinaryapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,7 @@ import static pl.gr.veterinaryapp.common.TokenConstants.TOKEN_PREFIX;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TokenServiceImpl implements TokenService {
 
     private final UserRepository userRepository;
@@ -44,6 +46,7 @@ public class TokenServiceImpl implements TokenService {
     private final Clock systemClock;
 
     public AuthToken register(@RequestBody LoginUser loginUser) {
+        log.info("Attempting to log in user: {}", loginUser.getUsername());
         var user = userRepository.findByUsername(loginUser.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
         if (!bcryptEncoder.matches(loginUser.getPassword(), user.getPassword())) {
@@ -69,6 +72,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Transactional
     public void logout(String header) {
+        log.info("Attempting to logout with header: {}", header);
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             throw new IncorrectDataException("Incorrect authentication header.");
         }

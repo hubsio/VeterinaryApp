@@ -1,6 +1,7 @@
 package pl.gr.veterinaryapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.gr.veterinaryapp.exception.IncorrectDataException;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
@@ -27,6 +29,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientResponseDto getClientById(Long id) {
+        log.info("Fetching client with id: {}", id);
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         return mapper.map(client);
@@ -43,6 +46,7 @@ public class ClientServiceImpl implements ClientService {
     @Transactional
     @Override
     public ClientResponseDto createClient(ClientRequestDto clientRequestDto) {
+        log.info("Add new client {}", clientRequestDto.toString());
         if (clientRequestDto.getSurname() == null || clientRequestDto.getName() == null) {
             throw new IncorrectDataException("Name and Surname should not be null.");
         }
@@ -54,12 +58,14 @@ public class ClientServiceImpl implements ClientService {
         client.setUser(user);
 
         Client savedClient = clientRepository.save(client);
+        log.info("New client added with ID: {}", client.getId());
         return mapper.map(savedClient);
     }
 
     @Transactional
     @Override
     public void deleteClient(Long id) {
+        log.info("Deleting client with id: {}", id);
         Client result = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         clientRepository.delete(result);

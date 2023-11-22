@@ -1,6 +1,7 @@
 package pl.gr.veterinaryapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.gr.veterinaryapp.exception.IncorrectDataException;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AnimalServiceImpl implements AnimalService {
 
     private final AnimalRepository animalRepository;
@@ -24,6 +26,7 @@ public class AnimalServiceImpl implements AnimalService {
 
     @Override
     public AnimalResponseDto getAnimalById(Long id) {
+        log.info("Fetching animal by id: {}", id);
         Animal animal = animalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         return mapper.mapToDto(animal);
@@ -32,6 +35,7 @@ public class AnimalServiceImpl implements AnimalService {
     @Transactional
     @Override
     public AnimalResponseDto createAnimal(AnimalRequestDto animalRequestDto) {
+        log.info("Creating new animal: {}", animalRequestDto);
         var animal = animalRepository.findBySpecies(animalRequestDto.getSpecies());
         if (animal.isPresent()) {
             throw new IncorrectDataException("Species exists.");
@@ -44,9 +48,11 @@ public class AnimalServiceImpl implements AnimalService {
     @Transactional
     @Override
     public void deleteAnimal(Long id) {
+        log.info("Deleting animal with id: {}", id);
         Animal animal = animalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wrong id."));
         animalRepository.delete(animal);
+        log.info("Animal with id {} deleted", id);
     }
 
     @Override
